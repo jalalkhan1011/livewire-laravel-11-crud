@@ -76,4 +76,11 @@ class PostComponent extends Component
         session()->flash('message', 'Post Updated Successfully');
         $this->resetInputFields();
     }
+
+    public function delete($id){
+        if($id){
+            Post::findOrFail($id)->delete();
+            session()->flash('message', 'Post Deleted Successfully');
+        }
+    } 
 }

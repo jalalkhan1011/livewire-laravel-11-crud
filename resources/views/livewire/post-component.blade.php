@@ -33,6 +33,7 @@
                                 <td>{{ $post->body ?: '' }}</td>
                                 <td>
                                     <button wire:click="edit({{ $post->id }})" class="btn btn-warning btn-sm text-white">Edit</buton>
+                                    <button wire:click="delete({{ $post->id }})" class="btn btn-danger btn-sm text-white">Delete</buton>
                                 </td>
                             </tr>
                         @endforeach
