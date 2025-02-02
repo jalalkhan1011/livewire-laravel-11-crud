@@ -31,7 +31,9 @@
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $post->title ?: '' }}</td>
                                 <td>{{ $post->body ?: '' }}</td>
-                                <td></td>
+                                <td>
+                                    <button wire:click="edit({{ $post->id }})" class="btn btn-warning btn-sm text-white">Edit</buton>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
