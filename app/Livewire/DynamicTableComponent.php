@@ -29,9 +29,11 @@ class DynamicTableComponent extends Component
 
     public function itemUpdated($index)
     {
-        if (strpos($index, 'items.') !== false) {
-            $this->calculateTotal();
-        }
+        // if (strpos($index, 'items.') !== false) {
+        //     $this->calculateTotal();
+        // }
+        $this->items[$index]['sub_total'] = $this->items[$index]['price'] * $this->items[$index]['qty'];
+        $this->calculateTotal();
     }
 
     public function calculateTotal()
