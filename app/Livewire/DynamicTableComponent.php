@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Item;
+use App\Models\ItemAmount;
 use Livewire\Component;
 
 class DynamicTableComponent extends Component
@@ -48,5 +50,30 @@ class DynamicTableComponent extends Component
     public function render()
     {
         return view('livewire.dynamic-table-component');
+    }
+
+    public function store()
+    {
+        $this->validate([
+            'total' => 'required'
+        ]);
+
+        $itemInfo = Item::create([
+            'uuid' => uniqid(),
+            'total' => $this->total
+        ]);
+
+        foreach ($this->items as $item) {
+            ItemAmount::create([
+                'uuid' => uniqid(),
+                'item_id' => $itemInfo->id,
+                'item_name' => $item['item_name'],
+                'price' => $item['price'],
+                'qty' => $item['qty'],
+                'sub_total' => $item['sub_total']
+            ]);
+        }
+
+        return back();
     }
 }
