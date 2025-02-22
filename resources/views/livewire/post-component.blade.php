@@ -1,5 +1,4 @@
-<div class="container mt-lg-5">
-    <div class="row">
+<div class="container mt-lg-5"> 
         <div class="card">
             <div class="card-header">
                 <h2>Post List</h2>
@@ -40,6 +39,5 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
+        </div> 
 </div>
