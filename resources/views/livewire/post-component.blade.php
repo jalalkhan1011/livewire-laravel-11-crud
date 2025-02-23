@@ -6,7 +6,7 @@
             <div class="card-body">
                 @if (session()->has('message'))
                     <div class="alert alert-success">
-                        {{ session('messege') }}
+                        {{ session('message') }}
                     </div>
                 @endif
                 @if ($updateMode)

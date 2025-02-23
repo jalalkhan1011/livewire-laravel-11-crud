@@ -78,4 +78,13 @@ class ProductComponent extends Component
 
         $this->resetInputFields();
     }
+
+    public function delete($id)
+    {
+        if ($id) {
+            Product::findOrFail($id)->delete();
+
+            Session()->flash('message', 'Product Deleted Successfully');
+        }
+    }
 }

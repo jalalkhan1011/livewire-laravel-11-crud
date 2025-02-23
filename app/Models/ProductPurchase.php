@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class ProductPurchase extends Model
 {
-    protected $fillable = ['sku', 'name', 'price'];
+    protected $fillable = ['date', 'sku', 'total'];
 
     public function purchaseProductItems()
     {
