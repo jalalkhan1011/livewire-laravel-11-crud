@@ -41,10 +41,8 @@
                                         @foreach ($items as $index => $item)
                                             <tr>
                                                 <td>
-                                                    {{-- <input type="text"
-                                                        wire:model="items.{{ $index }}.product_id"
-                                                        class="form-control"> --}}
                                                     <select wire:model="items.{{ $index }}.product_id"
+                                                        wire:change="productUpdate({{ $index }})"
                                                         class="form-control">
                                                         <option value="" disabled selected>
                                                             {{ __('Select Product') }}</option>
@@ -57,7 +55,7 @@
                                                 <td>
                                                     <input type="number" wire:model="items.{{ $index }}.price"
                                                         wire:change="itemUpdate({{ $index }})"
-                                                        class="form-control">
+                                                        class="form-control" readonly>
                                                 </td>
                                                 <td>
                                                     <input type="number"

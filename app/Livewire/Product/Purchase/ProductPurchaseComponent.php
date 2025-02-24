@@ -17,7 +17,7 @@ class ProductPurchaseComponent extends Component
 
     public function mount()
     {
-        $this->products = Product::pluck('name','id');
+        $this->products = Product::pluck('name', 'id');
         $this->date = now()->format('Y-m-d'); // Set default date
         $this->items[] = ['product_id' => '', 'quantity' => 1, 'price' => 0, 'individual_total' => 0];
     }
@@ -38,6 +38,19 @@ class ProductPurchaseComponent extends Component
     public function itemUpdate($index)
     {
         $this->items[$index]['individual_total'] = $this->items[$index]['price'] * $this->items[$index]['quantity'];
+        $this->calculateTotal();
+    }
+
+    public function productUpdate($index)
+    {
+        $product = Product::find($this->items[$index]['product_id']);
+        $this->items[$index]['price'] = $product->price;
+        $this->items[$index]['individual_total'] = $product->price * $this->items[$index]['quantity'];
+        $this->calculateTotal();
+    }
+
+    public function priceUpdate()
+    {
         $this->calculateTotal();
     }
 
