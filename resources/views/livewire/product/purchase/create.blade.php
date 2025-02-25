@@ -59,7 +59,7 @@
                                                 </td>
                                                 <td>
                                                     <input type="number"
-                                                        wire:model="items.{{ $index }}.quantity"
+                                                        wire:model="items.{{ $index }}.qty"
                                                         wire:change="itemUpdate({{ $index }})"
                                                         class="form-control">
                                                 </td>

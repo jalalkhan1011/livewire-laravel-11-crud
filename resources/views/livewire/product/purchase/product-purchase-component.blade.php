@@ -32,9 +32,9 @@
                     @foreach ($productPurchases as $productPurchase)
                         <tr>
                             <td>{{ ++$i }}</td>
-                            <td>{{ $productPurchases->sku ?: '' }}</td>
-                            <td>{{ $productPurchases->created_at ?: '' }}</td>
-                            <td>{{ $productPurchases->total ?: '' }}</td>
+                            <td>{{ $productPurchase->sku ?: '' }}</td>
+                            <td>{{ $productPurchase->created_at ?: '' }}</td>
+                            <td>{{ $productPurchase->total ?: '' }}</td>
                             <td>
                                 <button wire:click="edit({{ $productPurchase->id }})"
                                     class="btn btn-warning btn-sm text-white">{{ __('Edit') }}</buton>
