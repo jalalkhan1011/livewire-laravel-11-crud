@@ -13,8 +13,8 @@ class ProductPurchaseComponent extends Component
     public $items = [];
     public $grandtotal = 0;
     public $products;
-    public $isCreateModalOpen = false;
-    public $isEditModalOpen = false;
+    public $isModalOpen = false;
+    public $selectedProduct;
 
     public function mount()
     {
@@ -77,29 +77,21 @@ class ProductPurchaseComponent extends Component
         $this->items = [];
     }
 
-    public function openCreateModal()
+    public function openModal()
     {
-        $this->isCreateModalOpen = true;
-        $this->resetInputFields();
-    }
-
-    public function openEditModal()
-    {
-        $this->isEditModalOpen = true;
-        $this->resetInputFields();
+        $this->isModalOpen = true;
     }
 
     public function closeModal()
     {
-        $this->isCreateModalOpen = false;
-        $this->isEditModalOpen = false;
+        $this->isModalOpen = false;
         $this->resetInputFields();
     }
 
     public function create()
     {
         $this->resetInputFields();
-        $this->openCreateModal();
+        $this->openModal();
     }
 
     public function store()
@@ -126,5 +118,19 @@ class ProductPurchaseComponent extends Component
 
         $this->closeModal();
         session()->flash('message', 'Product Purchase Successfully');
+    }
+
+    public function edit($id)
+    {
+        $productPurchase = ProductPurchase::findOrFail($id);
+        $this->product_purchase_id = $id;
+        $this->date = $productPurchase->date;
+        $this->sku = $productPurchase->sku;
+        $this->total = $productPurchase->total;
+        $this->grandtotal = $productPurchase->total;
+
+        $this->items = PurchaseProductItem::where('product_purchase_id', $productPurchase->id)->get()->toArray();
+
+        $this->openModal();
     }
 }
