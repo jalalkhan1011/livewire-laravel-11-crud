@@ -38,7 +38,7 @@
                             <td>
                                 <button wire:click="edit({{ $productPurchase->id }})"
                                     class="btn btn-warning btn-sm text-white">
-                                    {{ __('Edit') }}</buton>
+                                  {{ __('Edit') }}</buton>
                                     <button wire:click="delete({{ $productPurchase->id }})"
                                         class="btn btn-danger btn-sm text-white">{{ __('Delete') }}</buton>
                             </td>
@@ -105,13 +105,6 @@
                                                                                 {{ $product }}
                                                                             </option>
                                                                         @endforeach
-                                                                        {{-- @foreach ($products as $key => $product)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ $item['product_id'] == $key ? 'selected' : '' }}>
-                                                                                {{ $product }}
-                                                                            </option>
-                                                                        @endforeach --}}
-                                                                    </select>
                                                                     </select>
                                                                 </td>
                                                                 <td>

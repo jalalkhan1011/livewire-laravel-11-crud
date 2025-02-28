@@ -14,7 +14,6 @@ class ProductPurchaseComponent extends Component
     public $grandtotal = 0;
     public $products;
     public $isModalOpen = false;
-    public $selectedProduct;
 
     public function mount()
     {
