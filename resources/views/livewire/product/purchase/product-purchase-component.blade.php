@@ -97,7 +97,7 @@
                                                                     <select
                                                                         wire:model="items.{{ $index }}.product_id"
                                                                         wire:change="productUpdate({{ $index }})"
-                                                                        class="form-control">
+                                                                        class="form-control" required>
                                                                         <option value="" disabled selected>
                                                                             {{ __('Select Product') }}</option>
                                                                         @foreach ($products as $key => $product)
@@ -111,19 +111,19 @@
                                                                     <input type="number"
                                                                         wire:model="items.{{ $index }}.price"
                                                                         wire:change="itemUpdate({{ $index }})"
-                                                                        class="form-control" readonly>
+                                                                        class="form-control" readonly required>
                                                                 </td>
                                                                 <td>
                                                                     <input type="number"
                                                                         wire:model="items.{{ $index }}.qty"
                                                                         wire:change="itemUpdate({{ $index }})"
-                                                                        class="form-control">
+                                                                        class="form-control" required>
                                                                 </td>
                                                                 <td>
                                                                     <input type="number"
                                                                         wire:model="items.{{ $index }}.individual_total"
                                                                         class="form-control"
-                                                                        hidden>{{ $item['individual_total'] }}
+                                                                        hidden required>{{ $item['individual_total'] }}
                                                                 </td>
                                                                 <td>
                                                                     <button
@@ -138,7 +138,7 @@
                                                             <td colspan="3" class="text-end">{{ __('Total') }}
                                                             </td>
                                                             <td><input type="number" wire:model="grandtotal"
-                                                                    class="form-control" hidden>{{ $grandtotal }}
+                                                                    class="form-control" hidden required>{{ $grandtotal }}
                                                             </td>
                                                             <td></td>
                                                         </tr>
