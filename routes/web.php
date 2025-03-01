@@ -15,5 +15,5 @@ Route::get('/posts', PostComponent::class)->name('posts');
 Route::get('/dynamics', DynamicTableComponent::class)->name('dynamics');
 Route::get('/products', ProductComponent::class)->name('products');
 Route::get('/products/purchase', ProductPurchaseComponent::class)->name('productPurchases');
-Route::get('/products/sales', ProductSaleComponent::class)->name('productSale');
+Route::get('/products/sale', ProductSaleComponent::class)->name('productSale');
 Route::get('/news', Crud::class)->name('news');

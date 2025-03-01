@@ -12,8 +12,9 @@ class ProductPurchaseComponent extends Component
     public $productPurchases, $date, $sku, $total, $product_purchase_id;
     public $items = [];
     public $grandtotal = 0;
-    public $products;
-    public $isModalOpen = false;
+    public $products; 
+    public $isCreateModalOpen = false;
+    public $isEditModalOpen = false;
 
     public function mount()
     {
@@ -73,24 +74,31 @@ class ProductPurchaseComponent extends Component
     private function resetInputFields()
     {
         $this->total = '';
+        $this->grandtotal = '';
         $this->items = [];
     }
 
-    public function openModal()
+    public function openCreateModal()
     {
-        $this->isModalOpen = true;
+        $this->isCreateModalOpen = true;
+    }
+
+    public function openEditModal()
+    {
+        $this->isEditModalOpen = true;
     }
 
     public function closeModal()
     {
-        $this->isModalOpen = false;
+        $this->isCreateModalOpen = false;
+        $this->isEditModalOpen = false;
         $this->resetInputFields();
     }
 
     public function create()
     {
         $this->resetInputFields();
-        $this->openModal();
+        $this->openCreateModal(); 
     }
 
     public function store()
@@ -128,8 +136,44 @@ class ProductPurchaseComponent extends Component
         $this->total = $productPurchase->total;
         $this->grandtotal = $productPurchase->total;
 
-        $this->items = PurchaseProductItem::where('product_purchase_id', $productPurchase->id)->get()->toArray();
+        $this->items = PurchaseProductItem::where('product_purchase_id', $productPurchase->id)->get()->toArray(); 
+        $this->openEditModal();
+    }
 
-        $this->openModal();
+    public function update()
+    {
+        $this->validate([
+            'date' => 'required',
+            'items.*.product_id' => 'required',
+            'items.*.qty' => 'required',
+            'items.*.price' => 'required',
+        ]);
+        if ($this->product_purchase_id) {
+            $purchase = ProductPurchase::findOrFail($this->product_purchase_id);
+            $purchase->update(['date' => $this->date, 'total' => $this->grandtotal]);
+
+            PurchaseProductItem::where('product_purchase_id', $this->product_purchase_id)->delete();
+
+            foreach ($this->items as $item) {
+                PurchaseProductItem::create([
+                    'sku' => rand(),
+                    'product_id' => $item['product_id'],
+                    'product_purchase_id' => $purchase->id,
+                    'price' => $item['price'],
+                    'qty' => $item['qty'],
+                    'individual_total' => $item['individual_total']
+                ]);
+            }
+        }
+
+        $this->closeModal();
+        session()->flash('message', 'Product Purchase Successfully');
+    }
+
+    public function  delete($id)
+    {
+        $productPurchase = ProductPurchase::findOrFail($id); 
+        $productPurchase->delete();
+        session()->flash('message', 'Product Purchase Deleted Successfully');
     }
 }
