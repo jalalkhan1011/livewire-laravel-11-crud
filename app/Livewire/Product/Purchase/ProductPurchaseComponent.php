@@ -12,7 +12,7 @@ class ProductPurchaseComponent extends Component
     public $productPurchases, $date, $sku, $total, $product_purchase_id;
     public $items = [];
     public $grandtotal = 0;
-    public $products; 
+    public $products;
     public $isCreateModalOpen = false;
     public $isEditModalOpen = false;
 
@@ -98,7 +98,7 @@ class ProductPurchaseComponent extends Component
     public function create()
     {
         $this->resetInputFields();
-        $this->openCreateModal(); 
+        $this->openCreateModal();
     }
 
     public function store()
@@ -136,7 +136,7 @@ class ProductPurchaseComponent extends Component
         $this->total = $productPurchase->total;
         $this->grandtotal = $productPurchase->total;
 
-        $this->items = PurchaseProductItem::where('product_purchase_id', $productPurchase->id)->get()->toArray(); 
+        $this->items = PurchaseProductItem::where('product_purchase_id', $productPurchase->id)->get()->toArray();
         $this->openEditModal();
     }
 
@@ -151,28 +151,67 @@ class ProductPurchaseComponent extends Component
         if ($this->product_purchase_id) {
             $purchase = ProductPurchase::findOrFail($this->product_purchase_id);
             $purchase->update(['date' => $this->date, 'total' => $this->grandtotal]);
-
-            PurchaseProductItem::where('product_purchase_id', $this->product_purchase_id)->delete();
-
-            foreach ($this->items as $item) {
-                PurchaseProductItem::create([
-                    'sku' => rand(),
-                    'product_id' => $item['product_id'],
-                    'product_purchase_id' => $purchase->id,
-                    'price' => $item['price'],
-                    'qty' => $item['qty'],
-                    'individual_total' => $item['individual_total']
-                ]);
-            }
+            $this->purchaseItemBatchUpdate($this->product_purchase_id);
+            $this->purchaseItemUpdate($this->product_purchase_id); 
         }
 
         $this->closeModal();
         session()->flash('message', 'Product Purchase Successfully');
     }
 
+    public function purchaseItemArray($purchaseId)
+    {
+        $purchaseItems = PurchaseProductItem::where('product_purchase_id', $purchaseId)->select('product_id')->get()->toArray();
+        $oldItems = [];
+        foreach ($purchaseItems as $purchaseItem) {
+            $oldItems[] = $purchaseItem['product_id'];
+        }
+        return $oldItems;
+    }
+
+    public function purchaseItemBatchUpdate($purchaseId)
+    {
+        $previousPurchaseItems = $this->purchaseItemArray($purchaseId);
+        $addProducts = array_diff(array_column($this->items, 'product_id'), $previousPurchaseItems);
+        $removeProducts = array_diff($previousPurchaseItems, array_column($this->items, 'product_id'));
+        foreach ($addProducts as $addProduct) {
+            PurchaseProductItem::create([
+                'sku' => rand(),
+                'product_id' => $addProduct,
+                'product_purchase_id' => $purchaseId,
+                'price' => $this->items[array_search($addProduct, array_column($this->items, 'product_id'))]['price'],
+                'qty' => $this->items[array_search($addProduct, array_column($this->items, 'product_id'))]['qty'],
+                'individual_total' => $this->items[array_search($addProduct, array_column($this->items, 'product_id'))]['individual_total']
+            ]);
+        }
+        PurchaseProductItem::whereIn('product_id', $removeProducts)->where('product_purchase_id', $purchaseId)->delete();
+    }
+
+    public function purchaseItemUpdate($purchaseId)
+    {
+        $purchaseItems = PurchaseProductItem::where('product_purchase_id', $purchaseId)->select('id')->get()->toArray();
+        
+        $itemPurchases = [];
+        foreach ($purchaseItems as $purchaseItem) {
+            $itemPurchases[] = $purchaseItem['id'];
+        }
+        
+        foreach ($itemPurchases as $key => $itemPurchase) {
+            $productFind =PurchaseProductItem::find($itemPurchase); 
+            if($productFind['product_id']){
+                $productFind->update([
+                    'product_id' => $this->items[$key]['product_id'],
+                    'price' => $this->items[$key]['price'],
+                    'qty' => $this->items[$key]['qty'],
+                    'individual_total' => $this->items[$key]['individual_total']
+                ]);
+            }
+        }
+    }
+
     public function  delete($id)
     {
-        $productPurchase = ProductPurchase::findOrFail($id); 
+        $productPurchase = ProductPurchase::findOrFail($id);
         $productPurchase->delete();
         session()->flash('message', 'Product Purchase Deleted Successfully');
     }

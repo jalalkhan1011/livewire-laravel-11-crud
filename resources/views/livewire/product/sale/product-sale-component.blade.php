@@ -36,13 +36,13 @@
                             <td>{{ ++$i }}</td>
                             <td>{{ $slae->sku ?: '' }}</td>
                             <td>{{ $sale->date ?: '' }}</td>
-                            <td>{{ $sale->sub_total ?: 0.00 }}</td>
-                            <td>{{ $sale->discount ?: 0.00 }}</td>
-                            <td>{{ $sale->grand_total ?: 0.00 }}</td>
+                            <td>{{ $sale->sub_total ?: 0.0 }}</td>
+                            <td>{{ $sale->discount ?: 0.0 }}</td>
+                            <td>{{ $sale->grand_total ?: 0.0 }}</td>
                             <td>
                                 <button wire:click="edit({{ $sale->id }})"
                                     class="btn btn-warning btn-sm text-white">
-                                  {{ __('Edit') }}</buton>
+                                    {{ __('Edit') }}</buton>
                                     <button wire:click="delete({{ $sale->id }})"
                                         class="btn btn-danger btn-sm text-white">{{ __('Delete') }}</buton>
                             </td>
@@ -50,7 +50,12 @@
                     @endforeach
                 </tbody>
             </table>
-            <!-- Modal --> 
+            <!-- Modal -->
+            @if ($isCreateModalOpen)
+                @include('livewire.product.sale.create')
+            @endif
+            @if ($isEditModalOpen)
+            @endif
         </div>
     </div>
 </div>
