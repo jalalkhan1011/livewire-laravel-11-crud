@@ -34,6 +34,7 @@
                                             <th>{{ __('Sku') }}</th>
                                             <th>{{ __('Price') }}</th>
                                             <th>{{ __('Qty') }}</th>
+                                            <th>{{ __('Amount') }}</th>
                                             <th><button wire:click="addItem()"
                                                     class="btn btn-sm btn-primary">{{ __('Add') }}</button></th>
                                         </tr>
@@ -59,20 +60,35 @@
                                                         wire:change="skuUpdate({{ $index }})" required>
                                                         <option value="" disabled selected>
                                                             {{ __('Select product') }}</option>
-                                                        @foreach ($productsSkus as $key => $productsSku)
+                                                        @foreach ($saleItem['productsSkus'] ?? [] as $key => $productsSku)
                                                             <option value="{{ $key }}">
                                                                 {{ $productsSku }}
                                                             </option>
                                                         @endforeach
                                                     </select>
                                                 </td>
-                                                <td><input class="form-control" wire:model="saleItems.{{ $index }}.price" wire:change="skuUpdate({{ $index }})"></td>
-                                                <td></td>
+                                                <td><input class="form-control"
+                                                        wire:model="saleItems.{{ $index }}.price"
+                                                        wire:change="skuUpdate({{ $index }})"></td>
+                                                <td><input class="form-control"
+                                                        wire:model="saleItems.{{ $index }}.qty"
+                                                        wire:change="skuUpdate({{ $index }})"></td>
+                                                <td><input class="form-control"
+                                                        wire:model="saleItems.{{ $index }}.individual_total"
+                                                        readonly hidden>{{ $saleItem['individual_total'] }}</td>
                                                 <td><button wire:click="removeItem({{ $index }})"
                                                         class="btn btn-sm btn-danger">{{ __('Delete') }}</button></td>
                                             </tr>
                                         @endforeach
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4" class="text-end">{{ __('Total') }}</td>
+                                            <td><input type="number" wire:model="grandTotal" class="form-control"
+                                                    hidden required>{{ $grandTotal }}</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>

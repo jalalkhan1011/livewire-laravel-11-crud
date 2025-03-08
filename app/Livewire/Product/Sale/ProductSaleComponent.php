@@ -38,13 +38,13 @@ class ProductSaleComponent extends Component
 
     public function productUpdate($index)
     {
-        $this->productsSkus = PurchaseProductItem::where('product_id', $this->saleItems[$index]['product_id'])->pluck('sku', 'id');
+        $this->saleItems[$index]['productsSkus'] = PurchaseProductItem::where('product_id', $this->saleItems[$index]['product_id'])->pluck('sku', 'sku'); 
         // $this->calculateTotal();
     }
 
     public function skuUpdate($index)
     {
-        $productItem = PurchaseProductItem::where('product_id', $this->saleItems[$index]['item_sku'])->first();
+        $productItem = PurchaseProductItem::where('sku', $this->saleItems[$index]['item_sku'])->first();
         $this->saleItems[$index]['price'] = $productItem->price;
         $this->saleItems[$index]['individual_total'] = $productItem->price * $this->saleItems[$index]['qty'];
         $this->calculateTotal();
