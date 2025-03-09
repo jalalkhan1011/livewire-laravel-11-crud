@@ -9,13 +9,14 @@ use Livewire\Component;
 
 class ProductSaleComponent extends Component
 {
-    public $sales, $date, $sku, $sub_total, $discount, $ground_total;
+    public $sales, $date, $sku, $sub_total, $discount, $grand_total;
     public $saleItems = [];
     public $isCreateModalOpen = false;
     public $isEditModalOpen = false;
     public $products;
     public $productsSkus = [];
-    public $grandTotal = 0;
+    public $subTotal = 0;
+    public $total = 0;
 
     public function mount()
     {
@@ -38,8 +39,7 @@ class ProductSaleComponent extends Component
 
     public function productUpdate($index)
     {
-        $this->saleItems[$index]['productsSkus'] = PurchaseProductItem::where('product_id', $this->saleItems[$index]['product_id'])->pluck('sku', 'sku'); 
-        // $this->calculateTotal();
+        $this->saleItems[$index]['productsSkus'] = PurchaseProductItem::where('product_id', $this->saleItems[$index]['product_id'])->pluck('sku', 'sku');
     }
 
     public function skuUpdate($index)
@@ -52,13 +52,15 @@ class ProductSaleComponent extends Component
 
     public function calculateTotal()
     {
-        $this->grandTotal = 0;
+        $this->subTotal = 0;
         foreach ($this->saleItems as  $index => $saleItem) {
             $this->saleItems[$index]['individual_total'] = $saleItem['price'] * $saleItem['qty'];
-            $this->grandTotal += $this->saleItems[$index]['individual_total'];
+            $sub = $this->subTotal += $this->saleItems[$index]['individual_total'];
         }
+        $this->total = $sub - $this->discount;
     }
 
+    
     public function render()
     {
         $this->sales = Sale::all();
@@ -69,6 +71,8 @@ class ProductSaleComponent extends Component
     private function resetInputFields()
     {
         $this->date = now()->format('Y-m-d');
+        $this->subTotal = '';
+        $this->total = '';
         $this->saleItems = [];
     }
 
@@ -87,5 +91,18 @@ class ProductSaleComponent extends Component
     {
         $this->openCreateModal();
         $this->resetInputFields();
+    }
+
+    public function store()
+    {
+        $this->validate([
+            'date' => 'required',
+            'saleItems.*.product_id' => 'required',
+            'saleItems.*.item_sku' => 'required',
+            'saleItems.*.qty' => 'required',
+            'saleItems.*.price' => 'required',
+        ]);
+
+        $productSale = Sale::create(['date' => $this->date, 'sku' => rand(), 'sub_total', 'discount', 'grand_total']);
     }
 }

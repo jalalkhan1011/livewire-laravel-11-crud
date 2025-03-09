@@ -69,7 +69,7 @@
                                                 </td>
                                                 <td><input class="form-control"
                                                         wire:model="saleItems.{{ $index }}.price"
-                                                        wire:change="skuUpdate({{ $index }})"></td>
+                                                        wire:change="skuUpdate({{ $index }})" readonly></td>
                                                 <td><input class="form-control"
                                                         wire:model="saleItems.{{ $index }}.qty"
                                                         wire:change="skuUpdate({{ $index }})"></td>
@@ -83,9 +83,22 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
+                                            <td colspan="4" class="text-end">{{ __('Sub Total') }}</td>
+                                            <td><input type="number" wire:model="subTotal" class="form-control" hidden
+                                                    required>{{ $subTotal }}</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-end">{{ __('Discount') }}</td>
+                                            <td><input type="number" wire:model="discount" wire:change="calculateTotal()" class="form-control"></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
                                             <td colspan="4" class="text-end">{{ __('Total') }}</td>
-                                            <td><input type="number" wire:model="grandTotal" class="form-control"
-                                                    hidden required>{{ $grandTotal }}</td>
+                                            <td>
+                                                <input type="number" wire:model="total" class="form-control" hidden
+                                                    required>{{ $total }}
+                                            </td>
                                             <td></td>
                                         </tr>
                                     </tfoot>
@@ -97,7 +110,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" wire:click="closeModal()">{{ __('Close') }}</button>
-                <button type="button" class="btn btn-primary">{{ __('Save') }}</button>
+                <button type="button" class="btn btn-primary"
+                    wire:click.prevent="store()">{{ __('Save') }}</button>
             </div>
         </div>
     </div>
