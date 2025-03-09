@@ -34,7 +34,7 @@
                     @foreach ($sales as $sale)
                         <tr>
                             <td>{{ ++$i }}</td>
-                            <td>{{ $slae->sku ?: '' }}</td>
+                            <td>{{ $sale->sku ?: '' }}</td>
                             <td>{{ $sale->date ?: '' }}</td>
                             <td>{{ $sale->sub_total ?: 0.0 }}</td>
                             <td>{{ $sale->discount ?: 0.0 }}</td>

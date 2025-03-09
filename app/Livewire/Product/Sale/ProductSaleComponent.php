@@ -5,6 +5,7 @@ namespace App\Livewire\Product\Sale;
 use App\Models\Product;
 use App\Models\PurchaseProductItem;
 use App\Models\sale\Sale;
+use App\Models\sale\SaleItem;
 use Livewire\Component;
 
 class ProductSaleComponent extends Component
@@ -60,7 +61,7 @@ class ProductSaleComponent extends Component
         $this->total = $sub - $this->discount;
     }
 
-    
+
     public function render()
     {
         $this->sales = Sale::all();
@@ -103,6 +104,27 @@ class ProductSaleComponent extends Component
             'saleItems.*.price' => 'required',
         ]);
 
-        $productSale = Sale::create(['date' => $this->date, 'sku' => rand(), 'sub_total', 'discount', 'grand_total']);
+        $productSale = Sale::create([
+            'date' => $this->date,
+            'sku' => rand(),
+            'sub_total' => $this->subTotal,
+            'discount' => $this->discount,
+            'grand_total' => $this->total
+        ]);
+
+        foreach ($this->saleItems as $saleItem) {
+            SaleItem::create([
+                'date' => $this->date,
+                'sku' => $saleItem['item_sku'],
+                'sale_id' => $productSale->id,
+                'product_id' => $saleItem['product_id'],
+                'price' => $saleItem['price'],
+                'qty' => $saleItem['qty'],
+                'individual_total' => $saleItem['individual_total']
+            ]);
+        }
+
+        $this->closeModal();
+        session()->flash('message', 'Product Sale Successfully');
     }
 }
