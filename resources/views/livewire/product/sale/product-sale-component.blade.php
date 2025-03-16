@@ -55,6 +55,7 @@
                 @include('livewire.product.sale.create')
             @endif
             @if ($isEditModalOpen)
+            @include('livewire.product.sale.edit')
             @endif
         </div>
     </div>

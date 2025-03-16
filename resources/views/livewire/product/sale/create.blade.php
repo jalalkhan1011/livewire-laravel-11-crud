@@ -56,7 +56,7 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control"
-                                                        wire:model="saleItems.{{ $index }}.item_sku"
+                                                        wire:model="saleItems.{{ $index }}.purchase_product_item_id"
                                                         wire:change="skuUpdate({{ $index }})" required>
                                                         <option value="" disabled selected>
                                                             {{ __('Select product') }}</option>

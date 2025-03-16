@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\sale\SaleItem;
 use Illuminate\Database\Eloquent\Model;
 
 class PurchaseProductItem extends Model
@@ -16,5 +17,10 @@ class PurchaseProductItem extends Model
     public function productPurchase()
     {
         return $this->belongsTo(ProductPurchase::class, 'product_purchase_id');
+    }
+
+    public function saleItems()
+    {
+        return $this->hasMany(SaleItem::class);
     }
 }
