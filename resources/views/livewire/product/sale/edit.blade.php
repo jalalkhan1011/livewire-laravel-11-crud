@@ -112,7 +112,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" wire:click="closeModal()">{{ __('Close') }}</button>
                 <button type="button" class="btn btn-primary"
-                    wire:click.prevent="store()">{{ __('Save') }}</button>
+                    wire:click.prevent="update()">{{ __('Update') }}</button>
             </div>
         </div>
     </div>

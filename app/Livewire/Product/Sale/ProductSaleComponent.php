@@ -17,10 +17,8 @@ class ProductSaleComponent extends Component
     public $isEditModalOpen = false;
     public $products;
     public $productsSkus = [];
-    public $selectedProducts = [];
-    public $selectedProductSkus = [];
-    public $editItem = null;
     public $subTotal = 0;
+    public $dis = 0;
     public $total = 0;
 
     public function mount()
@@ -28,7 +26,7 @@ class ProductSaleComponent extends Component
         $this->date = now()->format('Y-m-d');
         $this->saleItems[] = ['product_id' => '', 'purchase_product_item_id' => '', 'qty' => 1, 'price' => 0, 'individual_total' => 0];
         $this->products = Product::pluck('name', 'id');
-        $this->productsSkus = PurchaseProductItem::pluck('sku', 'id'); 
+        $this->productsSkus = PurchaseProductItem::pluck('sku', 'id');
     }
 
     public function addItem()
@@ -78,6 +76,7 @@ class ProductSaleComponent extends Component
     {
         $this->date = now()->format('Y-m-d');
         $this->subTotal = '';
+        $this->dis = '';
         $this->total = '';
         $this->saleItems = [];
     }
@@ -110,7 +109,7 @@ class ProductSaleComponent extends Component
         $this->validate([
             'date' => 'required',
             'saleItems.*.product_id' => 'required',
-            'saleItems.*.item_sku' => 'required',
+            'saleItems.*.purchase_product_item_id' => 'required',
             'saleItems.*.qty' => 'required',
             'saleItems.*.price' => 'required',
         ]);
@@ -157,5 +156,88 @@ class ProductSaleComponent extends Component
         }
 
         $this->openEditModal();
+    }
+
+    public function update()
+    {
+        $this->validate([
+            'date' => 'required',
+            'saleItems.*.product_id' => 'required',
+            'saleItems.*.purchase_product_item_id' => 'required',
+            'saleItems.*.qty' => 'required',
+            'saleItems.*.price' => 'required',
+        ]);
+
+        if ($this->sale_id) {
+            $sale = Sale::findOrFail($this->sale_id);
+            $sale->update([
+                'date' => $this->date,
+                'sub_total' => $this->subTotal,
+                'discount' => $this->discount,
+                'grand_total' => $this->total
+            ]);
+            $this->saleItemBatchUpdate($this->sale_id);
+            $this->saleItemUpdate($this->sale_id);
+
+            $this->closeModal($this->sale_id);
+            session()->flash('message', 'Product Sale Update Successfully');
+        }
+    }
+
+    public function saleItemArray($saleId)
+    {
+        $saleItems = SaleItem::where('sale_id', $saleId)->select('product_id')->get()->toArray();
+        $oldItems = [];
+
+        foreach ($saleItems as $saleItem) {
+            $oldItems[] = $saleItem['product_id'];
+        }
+        return $oldItems;
+    }
+
+    public function saleItemBatchUpdate($saleId)
+    {
+        $previousSaleItems = $this->saleItemArray($saleId);
+        $addProducts = array_diff(array_column($this->saleItems, 'product_id'), $previousSaleItems);
+        $removeProducts = array_diff($previousSaleItems, array_column($this->saleItems, 'product_id'));
+
+        foreach ($addProducts as $addProduct) {
+            SaleItem::create([
+                'date' => $this->date,
+                'purchase_product_item_id' => $this->saleItems[array_search($addProduct, array_column($this->saleItems, 'product_id'))]['purchase_product_item_id'],
+                'sale_id' => $saleId,
+                'product_id' => $addProduct,
+                'price' => $this->saleItems[array_search($addProduct, array_column($this->saleItems, 'product_id'))]['price'],
+                'qty' => $this->saleItems[array_search($addProduct, array_column($this->saleItems, 'product_id'))]['qty'],
+                'individual_total' => $this->saleItems[array_search($addProduct, array_column($this->saleItems, 'product_id'))]['individual_total']
+            ]);
+        }
+
+        SaleItem::whereIn('product_id', $removeProducts)->where('sale_id', $saleId)->delete();
+    }
+
+    public function saleItemUpdate($saleId)
+    {
+        $saleItems = SaleItem::where('sale_id', $saleId)->select('id')->get()->toArray();
+        $itemSales = [];
+
+        foreach ($saleItems as  $saleItem) {
+            $itemSales[] = $saleItem['id'];
+        }
+
+        foreach ($itemSales as $key => $itemSale) {
+            $productFind = SaleItem::find($itemSale);
+            if ($productFind['product_id']) {
+                $productFind->update([
+                    'date' => $this->date,
+                    'purchase_product_item_id' => $this->saleItems[$key]['purchase_product_item_id'],
+                    'sale_id' => $saleId,
+                    'product_id' => $this->saleItems[$key]['product_id'],
+                    'price' => $this->saleItems[$key]['price'],
+                    'qty' => $this->saleItems[$key]['qty'],
+                    'individual_total' => $this->saleItems[$key]['individual_total']
+                ]);
+            }
+        }
     }
 }
