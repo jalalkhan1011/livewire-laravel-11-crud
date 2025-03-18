@@ -240,4 +240,12 @@ class ProductSaleComponent extends Component
             }
         }
     }
+
+    public function delete($id)
+    {
+        $sale = Sale::findOrFail($id);
+        $sale->delete();
+
+        session()->flash('message', 'Product Sale Delete Successfully');
+    }
 }
